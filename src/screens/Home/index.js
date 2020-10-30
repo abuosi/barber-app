@@ -36,6 +36,8 @@ export default () => {
     const [loading, setLoading] = useState(false);
     const [list, setList] = useState([]);
 
+    const [refreshing, setRefreshing] = useState(false);
+
     const handleLocationFinder = async () => {
         setCoords(null);
         let result = await request(
@@ -86,9 +88,30 @@ export default () => {
         getBarbers();
     }, []);
 
+    /* const onRefresh = () => {
+
+    }*/
+
+    function onRefresh() {
+        setRefreshing(false);
+        getBarbers();
+    }
+
+    function handleLocationSearch() {
+        setCoords({});
+        console.log(locationText);
+        console.log('aqui');
+        getBarbers();    
+    }
+
     return (
         <Container>
-            <Scroller>
+            <Scroller refreshControl={
+                <RefreshControl 
+                    refreshing={refreshing} 
+                    onRefresh={onRefresh}
+                />
+            } >
                 <HeaderArea>
                     <HeaderTitle numberOfLines={2}>Encontre o seu barbeiro favorito</HeaderTitle>
                     <SearchButton onPress={()=>navigation.navigate('Search')}>
@@ -102,6 +125,7 @@ export default () => {
                         placeholderTextColor="#FFFFFF"
                         value={locationText}
                         onChangeText={t=>setLocationText(t)}
+                        onEndEditing={handleLocationSearch}
                     />
                     <LocationFinder onPress={handleLocationFinder}>
                         <MyLocationIcon width="26" height="26" fill="#FFFFFF" />
